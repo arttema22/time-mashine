@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('affiliations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('person_id')->constrained()->onDelete('cascade');
+            $table->foreignId('people_id')->constrained()->onDelete('cascade');
             $table->foreignId('organization_id')->constrained()->onDelete('cascade');
 
             $table->string('role')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index(['organization_id', 'started_at']);
-            $table->index(['person_id', 'started_at']);
+            $table->index(['people_id', 'started_at']);
         });
     }
 

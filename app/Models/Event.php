@@ -2,18 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Event extends Model
 {
-    /** @use HasFactory<\Database\Factories\EventFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'occurred_at', 'eventable_type', 'eventable_id', 'category'];
-    protected $casts = ['occurred_at' => 'datetime'];
+    protected $fillable = [
+        'title',
+        'description',
+        'occurred_at',
+        'eventable_id',
+        'eventable_type',
+        'category',
+        'cover_image',
+    ];
 
-    public function eventable()
+    protected $casts = [
+        'occurred_at' => 'datetime',
+    ];
+
+    public function eventable(): MorphTo
     {
         return $this->morphTo();
     }

@@ -2,65 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrganizationRequest;
-use App\Http\Requests\UpdateOrganizationRequest;
 use App\Models\Organization;
 
 class OrganizationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $organizations = Organization::paginate(15);
+        return view('organizations.index', compact('organizations'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreOrganizationRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Organization $organization)
     {
-        //
+        $events = $organization->events()->orderBy('occurred_at')->get();
+        $members = $organization->people()
+            ->withPivot('role', 'started_at', 'ended_at')
+            ->orderBy('affiliations.started_at')
+            ->get();
+
+        return view('organizations.show', compact('organization', 'events', 'members'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Organization $organization)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateOrganizationRequest $request, Organization $organization)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Organization $organization)
-    {
-        //
-    }
 }

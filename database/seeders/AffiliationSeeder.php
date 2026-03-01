@@ -2,16 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Affiliation;
 use Illuminate\Database\Seeder;
 
 class AffiliationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        //
+        Affiliation::factory()->count(30)->create();
     }
 }
