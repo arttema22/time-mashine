@@ -14,7 +14,10 @@ Route::get('/people', [PeopleController::class, 'index'])->name('people');
 Route::get('/people/{slug}', [PeopleController::class, 'show'])->name('people.show');
 
 // Organization routes
-Route::resource('organizations', OrganizationController::class);
+Route::get('/organization', [OrganizationController::class, 'index'])->name('organization');
+Route::get('/organization/{slug}', [OrganizationController::class, 'show'])->name('organization.show');
+
+
 
 // Affiliation routes
 Route::resource('affiliations', AffiliationController::class);

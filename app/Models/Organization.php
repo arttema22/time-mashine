@@ -22,7 +22,10 @@ class Organization extends Model
         'logo_path',
     ];
 
-    protected $casts = ['founded_date', 'dissolved_date'];
+    protected $casts = [
+        'founded_date' => 'date',
+        'dissolved_date' => 'date',
+    ];
 
     public function affiliations(): HasMany
     {
@@ -43,5 +46,15 @@ class Organization extends Model
     public function events(): MorphMany
     {
         return $this->morphMany(Event::class, 'eventable');
+    }
+
+    public function getFoundedDateFormattedAttribute()
+    {
+        return $this->founded_date?->format('d.m.Y');
+    }
+
+    public function getDissolvedDateFormattedAttribute()
+    {
+        return $this->dissolved_date?->format('d.m.Y');
     }
 }

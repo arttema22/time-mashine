@@ -1,4 +1,22 @@
 <x-guest-layout>
+    <style type="text/css">
+        .vis-item.birthday {
+            background-color: darkgreen;
+            border-color: green;
+            color: white;
+        }
+
+        .vis-item.deathday {
+            background-color: darkgray;
+            border-color: gray;
+            color: white;
+        }
+
+        .vis-item.war {
+            background-color: rgba(63, 63, 63, 0.4);
+        }
+    </style>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ $person->name }}

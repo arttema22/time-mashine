@@ -18,6 +18,9 @@
                     <x-nav-link href="{{ route('people') }}" :active="request()->routeIs('people*')">
                         Люди
                     </x-nav-link>
+                    <x-nav-link href="{{ route('organization') }}" :active="request()->routeIs('organization*')">
+                        Организации
+                    </x-nav-link>
                 </div>
 
             </div>
@@ -50,6 +53,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('people') }}" :active="request()->routeIs('people')">
                 Люди
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('organization') }}" :active="request()->routeIs('organization*')">
+                Организации
             </x-responsive-nav-link>
         </div>
     </div>

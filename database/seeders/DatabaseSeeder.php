@@ -17,6 +17,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PeopleSeeder::class,
+            RussianEmperorsSeeder::class,
+            RussianWritersSeeder::class,
+            WorldPhysicistsSeeder::class,
+            GlobalEventsSeeder::class,
             // OrganizationSeeder::class,
             // AffiliationSeeder::class,
             // EventSeeder::class,

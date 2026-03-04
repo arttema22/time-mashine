@@ -30,7 +30,7 @@ class Affiliation extends Model
         return is_null($this->ended_at);
     }
 
-    public function person(): BelongsTo
+    public function people(): BelongsTo
     {
         return $this->belongsTo(People::class, 'people_id');
     }

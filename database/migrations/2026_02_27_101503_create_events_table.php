@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('occurred_at');
-            $table->morphs('eventable');
+            $table->dateTime('ended_at')->nullable();
+            $table->nullableMorphs('eventable');
             $table->string('category')->nullable();
             $table->string('cover_image')->nullable();
             $table->timestamps();

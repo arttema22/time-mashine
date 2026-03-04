@@ -2,14 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\People;
+use Illuminate\Http\Request;
 
 class PeopleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $people = People::paginate(15);
-        return view('people.index', compact('people'));
+        // Текущий год для отображения (по умолчанию текущий)
+        $currentYear = $request->input('year', now()->year);
+        $range = 20;
+
+        $startDate = now()->create($currentYear, 1, 1)->subYears($range);
+        $endDate = now()->create($currentYear, 1, 1)->addYears($range);
+
+        $people = People::whereBetween('birth_date', [$startDate, $endDate])
+            ->orderBy('birth_date')->get();
+        $events = Event::whereNull('eventable_type')->orderBy('occurred_at')->get();
+
+        $groups = [];
+        $items = [];
+        $id = 0;
+
+        $groups[] = [
+            'id' => 'global_events',
+            'content' => 'Global events',
+            'value' => 1,
+        ];
+        $groups[] = [
+            'id' => 'people',
+            'content' => 'People',
+            'value' => 2,
+        ];
+
+        foreach ($events as $event) {
+            $item = [
+                'id' => $id++,
+                'content' => $event->title,
+                'start' => $event->occurred_at,
+                'end' => $event->ended_at,
+                'title' => $event->description,
+                'type' => $event->ended_at ? 'background' : '',
+                'group' => $event->ended_at ? null : 'global_events',
+                'className' => $event->category,
+            ];
+            $items[] = $item;
+        }
+
+        foreach ($people as $person) {
+            $item = [
+                'id' => $id++,
+                'start' => $person->birth_date,
+                'content' => $person->name . "<br>" . $person->birth_date_formatted . ($person->death_date ? (' - ' . $person->death_date_formatted) : ''),
+                'title' => $person->name . "<br>" . $person->biography,
+                'person_slug' => $person->slug,
+                'className' => $person->death_date ? 'dead' : 'alive',
+                'end' => $person->death_date ? $person->death_date : now(),
+                'group' => 'people',
+                'type' => 'range',
+            ];
+            $items[] = $item;
+        }
+
+        // Навигация по годам
+        $prevYear = $currentYear - ($range * 2);
+        $nextYear = $currentYear + ($range * 2);
+
+        return view('people.index', compact(
+            'people',
+            'items',
+            'groups',
+            'startDate',
+            'endDate',
+            'currentYear',
+            'prevYear',
+            'nextYear',
+            'range'
+        ));
     }
 
     public function show($slug)
@@ -18,22 +88,36 @@ class PeopleController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        $events = Event::all();
+
         $items = [];
         $id = 1;
 
-        // Дата рождения
+        foreach ($events as $event) {
+            $item = [
+                'id' => $id++,
+                'content' => $event->title,
+                'start' => $event->occurred_at,
+                'end' => $event->ended_at ? $event->ended_at : $event->occurred_at,
+                'className' => $event->category,
+                'type' => "background",
+            ];
+            $items[] = $item;
+        }
+
         $items[] = [
             'id' => $id++,
-            'content' => "Родился<br>" . $person->birth_date->format('d.m.Y'),
-            'start' => $person->birth_date->format('Y-m-d'),
+            'content' => "Дата рождения<br>" . $person->birth_date_formatted,
+            'start' => $person->birth_date,
+            'className' => 'birthday'
         ];
 
-        // Дата смерти
         if ($person->death_date) {
             $items[] = [
                 'id' => $id++,
-                'content' => "Дата смерти<br>" . $person->death_date->format('d.m.Y'),
-                'start' => $person->death_date->format('Y-m-d'),
+                'content' => "Дата смерти<br>" . $person->death_date_formatted,
+                'start' => $person->death_date,
+                'className' => 'deathday'
             ];
         }
 
@@ -42,13 +126,11 @@ class PeopleController extends Controller
             $item = [
                 'id' => $id++,
                 'content' => $affiliation->organization->name . "<br>" . ($affiliation->role ?? ''),
-                'start' => $affiliation->started_at->format('Y-m-d'),
+                'start' => $affiliation->started_at,
             ];
-
-            if ($affiliation->ended_at) {
-                $item['end'] = $affiliation->ended_at->format('Y-m-d');
-            }
-
+            $item['end'] = $affiliation->ended_at
+                ? $affiliation->ended_at->format('Y-m-d')
+                : now()->format('Y-m-d');
             $items[] = $item;
         }
 
@@ -56,17 +138,17 @@ class PeopleController extends Controller
         foreach ($person->events as $event) {
             $items[] = [
                 'id' => $id++,
-                'content' => $event->title . "<br>" . $event->occurred_at->format('Y-m-d'),
+                'content' => $event->title . "<br>" . $event->occurred_at->format('d.m.Y'),
                 'start' => $event->occurred_at->format('Y-m-d'),
                 'type' => 'point',
             ];
         }
 
         // Диапазон дат
-        $startDate = $person->birth_date->copy()->subYears(5)->format('Y-m-d');
+        $startDate = $person->birth_date->subYears(5)->format('Y-m-d');
         $endDate = $person->death_date
-            ? $person->death_date->copy()->addYears(5)->format('Y-m-d')
-            : now()->format('Y-m-d');
+            ? $person->death_date->addYears(5)->format('Y-m-d')
+            : now()->addYears(5)->format('Y-m-d');
 
         return view('people.show', compact('person', 'items', 'startDate', 'endDate'));
     }
