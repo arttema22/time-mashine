@@ -39,4 +39,14 @@ class Affiliation extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function getStartedAtFormattedAttribute()
+    {
+        return $this->started_at?->format('d.m.Y');
+    }
+
+    public function getEndedAtFormattedAttribute()
+    {
+        return $this->ended_at->format('d.m.Y');
+    }
 }

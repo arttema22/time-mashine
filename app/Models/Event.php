@@ -46,4 +46,13 @@ class Event extends Model
         return $this->category?->icon() ?? '📌';
     }
 
+    public function getOccurredAtFormattedAttribute()
+    {
+        return $this->occurred_at?->format('d.m.Y');
+    }
+
+    public function getEndedAtFormattedAttribute()
+    {
+        return $this->ended_at->format('d.m.Y');
+    }
 }
