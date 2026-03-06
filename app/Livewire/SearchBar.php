@@ -12,7 +12,7 @@ class SearchBar extends Component
     public $search = '';
     public $results = [];
     public $showResults = false;
-    public $selectedFilter = 'all'; // all, people, organizations, events
+    public $selectedFilter = 'all';
 
     protected $listeners = ['searchCompleted' => '$refresh'];
 

@@ -1,3 +1,144 @@
+HomeController.php
+<?php
+
+namespace App\Http\Controllers;
+
+class HomeController extends Controller
+{
+    /**
+     * Отображение главной страницы (welcome)
+     */
+    public function index()
+    {
+        return view('welcome');
+    }
+}
+---------------------------
+welcome.blade.php
+<x-guest-layout>
+
+    <div class="min-h-80 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <header class="text-center mb-12">
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-3">{{ config('app.name') }}</h1>
+            </header>
+
+            <div class="mb-10">
+                <livewire:search-bar />
+            </div>
+        </div>
+
+    </div>
+
+</x-guest-layout>
+--------------------
+
+SearchBar.php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use App\Models\People;
+use App\Models\Organization;
+use App\Models\Event;
+
+class SearchBar extends Component
+{
+    public $search = '';
+    public $results = [];
+    public $showResults = false;
+    public $selectedFilter = 'all';
+
+    protected $listeners = ['searchCompleted' => '$refresh'];
+
+    public function updatedSearch()
+    {
+        if (strlen($this->search) >= 2) {
+            $this->performSearch();
+            $this->showResults = true;
+        } else {
+            $this->results = [];
+            $this->showResults = false;
+        }
+    }
+
+    public function performSearch()
+    {
+        $query = strtolower($this->search);
+        $this->results = [];
+
+        // Поиск по людям
+        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'people') {
+            $people = People::where('name', 'LIKE', "%{$query}%")
+                ->orWhere('biography', 'LIKE', "%{$query}%")
+                ->limit(10)
+                ->get()
+                ->map(fn($p) => [
+                    'type' => 'people',
+                    'id' => $p->id,
+                    'title' => $p->name,
+                    'subtitle' => $p->birth_date ? $p->birth_date_formatted . ' г.р.' : '',
+                    'url' => route('people.show', $p->slug)
+                ]);
+            $this->results = array_merge($this->results, $people->toArray());
+        }
+
+        // Поиск по организациям
+        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'organizations') {
+            $organizations = Organization::where('name', 'LIKE', "%{$query}%")
+                ->orWhere('description', 'LIKE', "%{$query}%")
+                ->limit(10)
+                ->get()
+                ->map(fn($o) => [
+                    'type' => 'organization',
+                    'id' => $o->id,
+                    'title' => $o->name,
+                    'subtitle' => $o->started_at ? 'Основано: ' . $o->started_at_formatted : '',
+                    'url' => route('organizations.show', $o->slug)
+                ]);
+            $this->results = array_merge($this->results, $organizations->toArray());
+        }
+
+        // Поиск по событиям
+        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'events') {
+            $events = Event::where('title', 'LIKE', "%{$query}%")
+                ->orWhere('description', 'LIKE', "%{$query}%")
+                ->limit(10)
+                ->get()
+                ->map(fn($e) => [
+                    'type' => 'event',
+                    'id' => $e->id,
+                    'title' => $e->title,
+                    'subtitle' => $e->started_at ? 'Дата: ' . $e->started_at_formatted : '',
+                    'url' => route('events.show', $e->id)
+                ]);
+            $this->results = array_merge($this->results, $events->toArray());
+        }
+    }
+
+    public function selectFilter($filter)
+    {
+        $this->selectedFilter = $filter;
+        $this->performSearch();
+    }
+
+    public function clearSearch()
+    {
+        $this->search = '';
+        $this->results = [];
+        $this->showResults = false;
+    }
+
+    public function render()
+    {
+        return view('livewire.search-bar');
+    }
+}
+----------------------
+search-bar.blade.php
+
 <div class="relative w-full max-w-3xl mx-auto" x-data="{ open: @entangle('showResults'), focused: false }"
     @keydown.escape.window="open = false" @click.away="open = false">
     <!-- Поисковая строка -->
@@ -89,3 +230,6 @@
     </div>
     @endif
 </div>
+
+------------------
+
