@@ -14,7 +14,7 @@ class Event extends Model
     protected $fillable = [
         'title',
         'description',
-        'occurred_at',
+        'started_at',
         'ended_at',
         'eventable_id',
         'eventable_type',
@@ -23,7 +23,7 @@ class Event extends Model
     ];
 
     protected $casts = [
-        'occurred_at' => 'datetime',
+        'started_at' => 'datetime',
         'ended_at' => 'datetime',
         'category' => EventCategory::class,
     ];
@@ -48,7 +48,7 @@ class Event extends Model
 
     public function getOccurredAtFormattedAttribute()
     {
-        return $this->occurred_at?->format('d.m.Y');
+        return $this->started_at?->format('d.m.Y');
     }
 
     public function getEndedAtFormattedAttribute()

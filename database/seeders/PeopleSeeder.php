@@ -24,7 +24,7 @@ class PeopleSeeder extends Seeder
         Event::create([
             'title' => 'Полет в космос',
             'description' => 'Восток-1',
-            'occurred_at' => '1961-04-12 09:07:00',
+            'started_at' => '1961-04-12 09:07:00',
             'eventable_type' => People::class,
             'eventable_id' => $person->id,
             'category' => 'milestone'

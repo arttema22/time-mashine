@@ -15,16 +15,16 @@ class Organization extends Model
     protected $fillable = [
         'name',
         'slug',
-        'founded_date',
-        'dissolved_date',
+        'started_at',
+        'ended_at',
         'type',
         'description',
         'logo_path',
     ];
 
     protected $casts = [
-        'founded_date' => 'date',
-        'dissolved_date' => 'date',
+        'started_at' => 'date',
+        'ended_at' => 'date',
     ];
 
     public function affiliations(): HasMany
@@ -50,11 +50,11 @@ class Organization extends Model
 
     public function getFoundedDateFormattedAttribute()
     {
-        return $this->founded_date?->format('d.m.Y');
+        return $this->started_at?->format('d.m.Y');
     }
 
     public function getDissolvedDateFormattedAttribute()
     {
-        return $this->dissolved_date?->format('d.m.Y');
+        return $this->ended_at?->format('d.m.Y');
     }
 }

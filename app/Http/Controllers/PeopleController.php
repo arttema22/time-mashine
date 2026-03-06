@@ -19,7 +19,7 @@ class PeopleController extends Controller
 
         $people = People::whereBetween('birth_date', [$startDate, $endDate])
             ->orderBy('birth_date')->get();
-        $events = Event::whereNull('eventable_type')->orderBy('occurred_at')->get();
+        $events = Event::whereNull('eventable_type')->orderBy('started_at')->get();
 
         $groups = [];
         $items = [];
@@ -42,7 +42,7 @@ class PeopleController extends Controller
                 $items[] = [
                     'id' => $id++,
                     'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->occurred_at,
+                    'start' => $event->started_at,
                     'end' => null,
                     'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
                     'group' => 'global_events',
@@ -53,7 +53,7 @@ class PeopleController extends Controller
                 $items[] = [
                     'id' => $id++,
                     'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->occurred_at,
+                    'start' => $event->started_at,
                     'end' => $event->ended_at,
                     'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
                     'type' => 'point',
@@ -63,7 +63,7 @@ class PeopleController extends Controller
                 $items[] = [
                     'id' => $id++,
                     'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->occurred_at,
+                    'start' => $event->started_at,
                     'end' => $event->ended_at,
                     'type' => 'background',
                     'className' => 'category-' . ($event->category?->value ?? 'milestone'),
@@ -118,8 +118,8 @@ class PeopleController extends Controller
             $item = [
                 'id' => $id++,
                 'content' => $event->title,
-                'start' => $event->occurred_at,
-                'end' => $event->ended_at ? $event->ended_at : $event->occurred_at,
+                'start' => $event->started_at,
+                'end' => $event->ended_at ? $event->ended_at : $event->started_at,
                 'className' => $event->category,
                 'type' => "background",
             ];
@@ -159,8 +159,8 @@ class PeopleController extends Controller
         foreach ($person->events as $event) {
             $items[] = [
                 'id' => $id++,
-                'content' => $event->title . "<br>" . $event->occurred_at->format('d.m.Y'),
-                'start' => $event->occurred_at->format('Y-m-d'),
+                'content' => $event->title . "<br>" . $event->started_at->format('d.m.Y'),
+                'start' => $event->started_at->format('Y-m-d'),
                 'type' => 'point',
             ];
         }

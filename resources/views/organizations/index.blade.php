@@ -28,9 +28,9 @@
                                         </h3>
 
                                         <div class="mt-1 text-sm text-gray-600">
-                                            Образована: {{ $organization->founded_date_formatted }}
-                                            @if($organization->dissolved_date)
-                                            , Закрыта: {{ $organization->dissolved_date_formatted }}
+                                            Образована: {{ $organization->started_at_formatted }}
+                                            @if($organization->ended_at)
+                                            , Закрыта: {{ $organization->ended_at_formatted }}
                                             @endif
                                         </div>
 

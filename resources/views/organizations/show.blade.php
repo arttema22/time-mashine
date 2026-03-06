@@ -11,9 +11,9 @@
 
                 <h1 class="text-2xl font-bold mb-4">{{ $organization->name }}</h1>
                 <p class="text-gray-600 mb-6">
-                    {{ $organization->founded_date->format('d.m.Y') }}
-                    @if($organization->dissolved_date)
-                    — {{ $organization->dissolved_date->format('d.m.Y') }}
+                    {{ $organization->started_at->format('d.m.Y') }}
+                    @if($organization->ended_at)
+                    — {{ $organization->ended_at->format('d.m.Y') }}
                     @endif
                 </p>
 

@@ -26,7 +26,7 @@
     </div>
 
     <!-- Фильтры -->
-    <div class="flex gap-2 mt-2">
+    <div class="flex gap-2 mt-2 flex-wrap">
         @foreach(['all' => 'Все', 'people' => 'Люди', 'organizations' => 'Организации', 'events' => 'События'] as $value
         => $label)
         <button wire:click="selectFilter('{{ $value }}')"

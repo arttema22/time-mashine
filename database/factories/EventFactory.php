@@ -19,7 +19,7 @@ class EventFactory extends Factory
         return [
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
-            'occurred_at' => $this->faker->dateTimeBetween('-50 years', 'now'),
+            'started_at' => $this->faker->dateTimeBetween('-50 years', 'now'),
             'eventable_type' => $eventableType,
             'eventable_id' => $eventableId,
             'category' => $this->faker->randomElement(['formation', 'album', 'tour', 'award', 'event', 'milestone']),

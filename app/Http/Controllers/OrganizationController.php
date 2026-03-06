@@ -23,16 +23,16 @@ class OrganizationController extends Controller
         // Дата образования
         $items[] = [
             'id' => $id++,
-            'content' => "Образовалась<br>" . $organization->founded_date_formatted,
-            'start' => $organization->founded_date,
+            'content' => "Образовалась<br>" . $organization->started_at_formatted,
+            'start' => $organization->started_at,
         ];
 
         // Дата закрытия
-        if ($organization->dissolved_date) {
+        if ($organization->ended_at) {
             $items[] = [
                 'id' => $id++,
-                'content' => "Закрылась<br>" . $organization->dissolved_date_formatted,
-                'start' => $organization->dissolved_date,
+                'content' => "Закрылась<br>" . $organization->ended_at_formatted,
+                'start' => $organization->ended_at,
             ];
         }
 
@@ -53,16 +53,16 @@ class OrganizationController extends Controller
         foreach ($organization->events as $event) {
             $items[] = [
                 'id' => $id++,
-                'content' => $event->title . "<br>" . $event->occurred_at->format('d.m.Y'),
-                'start' => $event->occurred_at->format('Y-m-d'),
+                'content' => $event->title . "<br>" . $event->started_at->format('d.m.Y'),
+                'start' => $event->started_at->format('Y-m-d'),
                 'type' => 'point',
             ];
         }
 
         // Диапазон дат
-        $startDate = $organization->founded_date->subYears(5)->format('Y-m-d');
-        $endDate = $organization->dissolved_date
-            ? $organization->dissolved_date->addYears(5)->format('Y-m-d')
+        $startDate = $organization->started_at->subYears(5)->format('Y-m-d');
+        $endDate = $organization->ended_at
+            ? $organization->ended_at->addYears(5)->format('Y-m-d')
             : now()->addYears(5)->format('Y-m-d');
 
         return view('organizations.show', compact('organization', 'items', 'startDate', 'endDate'));

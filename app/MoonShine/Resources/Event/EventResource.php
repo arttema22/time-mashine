@@ -23,7 +23,7 @@ class EventResource extends ModelResource
 
     protected string $column = 'title';
 
-    protected string $sortColumn = 'occurred_at';
+    protected string $sortColumn = 'started_at';
 
     protected bool $createInModal = true;
 

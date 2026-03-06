@@ -35,7 +35,7 @@ class EventIndexPage extends IndexPage
     {
         return [
             Text::make('title'),
-            Date::make('occurred_at')->format('d.m.Y'),
+            Date::make('started_at')->format('d.m.Y'),
             Date::make('ended_at')->format('d.m.Y'),
             Enum::make('Категории', 'category')
                 ->attach(EventCategory::class),
@@ -53,7 +53,7 @@ class EventIndexPage extends IndexPage
     protected function filters(): iterable
     {
         return [
-            Date::make('occurred_at')->format('d.m.Y'),
+            Date::make('started_at')->format('d.m.Y'),
             Date::make('ended_at')->format('d.m.Y'),
             Enum::make('Категории', 'category')
                 ->attach(EventCategory::class),

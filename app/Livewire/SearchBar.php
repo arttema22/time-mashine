@@ -58,7 +58,7 @@ class SearchBar extends Component
                     'type' => 'organization',
                     'id' => $o->id,
                     'title' => $o->name,
-                    'subtitle' => $o->founded_date ? 'Основано: ' . $o->founded_date_formatted : '',
+                    'subtitle' => $o->started_at ? 'Основано: ' . $o->started_at_formatted : '',
                     'url' => route('organizations.show', $o->slug)
                 ]);
             $this->results = array_merge($this->results, $organizations->toArray());
@@ -74,7 +74,7 @@ class SearchBar extends Component
                     'type' => 'event',
                     'id' => $e->id,
                     'title' => $e->title,
-                    'subtitle' => $e->occurred_at ? 'Дата: ' . $e->occurred_at_formatted : '',
+                    'subtitle' => $e->started_at ? 'Дата: ' . $e->started_at_formatted : '',
                     'url' => route('events.show', $e->id)
                 ]);
             $this->results = array_merge($this->results, $events->toArray());

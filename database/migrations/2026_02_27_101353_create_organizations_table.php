@@ -14,14 +14,14 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->date('founded_date');
-            $table->date('dissolved_date')->nullable();
+            $table->date('started_at');
+            $table->date('ended_at')->nullable();
             $table->string('type')->default('band');
             $table->text('description')->nullable();
             $table->string('logo_path')->nullable();
             $table->timestamps();
 
-            $table->index('founded_date');
+            $table->index('started_at');
         });
     }
 

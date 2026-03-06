@@ -35,7 +35,7 @@ class EventFormPage extends FormPage
             Box::make([
                 Text::make('title'),
                 Textarea::make('description'),
-                Date::make('occurred_at'),
+                Date::make('started_at'),
                 Date::make('ended_at'),
                 Enum::make('category', 'category')->attach(EventCategory::class),
             ]),

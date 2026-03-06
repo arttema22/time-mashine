@@ -145,6 +145,81 @@ return new class extends Migration
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use MoonShine\Laravel\Models\MoonshineUserRole;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('moonshine_user_roles', static function (Blueprint $table): void {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        DB::table('moonshine_user_roles')->insert([
+            'id' => MoonshineUserRole::DEFAULT_ROLE_ID,
+            'name' => 'Admin',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('moonshine_user_roles');
+    }
+};
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use MoonShine\Laravel\Models\MoonshineUserRole;
+
+return new class () extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('moonshine_users', static function (Blueprint $table): void {
+            $table->id();
+
+            $table->foreignId('moonshine_user_role_id')
+                ->default(MoonshineUserRole::DEFAULT_ROLE_ID)
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->string('email', 190)->unique();
+            $table->string('password');
+            $table->string('name');
+            $table->string('avatar')->nullable();
+            $table->string('remember_token', 100)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('moonshine_users');
+    }
+};
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -228,18 +303,52 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::create('people', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->date('birth_date');
+            $table->date('death_date')->nullable();
+            $table->text('biography')->nullable();
+            $table->string('photo_path')->nullable();
+            $table->timestamps();
+
+            $table->index('birth_date');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('people');
+    }
+};
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->date('founded_date');
-            $table->date('dissolved_date')->nullable();
+            $table->date('started_at');
+            $table->date('ended_at')->nullable();
             $table->string('type')->default('band');
             $table->text('description')->nullable();
             $table->string('logo_path')->nullable();
             $table->timestamps();
 
-            $table->index('founded_date');
+            $table->index('started_at');
         });
     }
 
@@ -304,14 +413,15 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->dateTime('occurred_at');
-            $table->morphs('eventable');
+            $table->dateTime('started_at');
+            $table->dateTime('ended_at')->nullable();
+            $table->nullableMorphs('eventable');
             $table->string('category')->nullable();
             $table->string('cover_image')->nullable();
             $table->timestamps();
 
-            $table->index('occurred_at');
-            $table->index(['eventable_type', 'eventable_id', 'occurred_at']);
+            $table->index('started_at');
+            $table->index(['eventable_type', 'eventable_id', 'started_at']);
         });
     }
 
@@ -329,23 +439,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('people', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->date('birth_date');
-            $table->date('death_date')->nullable();
-            $table->text('biography')->nullable();
-            $table->string('photo_path')->nullable();
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-
-            $table->index('birth_date');
         });
     }
 
@@ -354,6 +461,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('people');
+        Schema::dropIfExists('notifications');
     }
 };

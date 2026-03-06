@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             RussianWritersSeeder::class,
             WorldPhysicistsSeeder::class,
             GlobalEventsSeeder::class,
+            RussianHistoryEventsSeeder::class,
             // OrganizationSeeder::class,
             // AffiliationSeeder::class,
             // EventSeeder::class,

@@ -14,15 +14,15 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->dateTime('occurred_at');
+            $table->dateTime('started_at');
             $table->dateTime('ended_at')->nullable();
             $table->nullableMorphs('eventable');
             $table->string('category')->nullable();
             $table->string('cover_image')->nullable();
             $table->timestamps();
 
-            $table->index('occurred_at');
-            $table->index(['eventable_type', 'eventable_id', 'occurred_at']);
+            $table->index('started_at');
+            $table->index(['eventable_type', 'eventable_id', 'started_at']);
         });
     }
 
