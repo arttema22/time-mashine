@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Event;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Event;
-use App\MoonShine\Resources\Event\Pages\EventIndexPage;
-use App\MoonShine\Resources\Event\Pages\EventFormPage;
 use App\MoonShine\Resources\Event\Pages\EventDetailPage;
-
-use MoonShine\Laravel\Resources\ModelResource;
+use App\MoonShine\Resources\Event\Pages\EventFormPage;
+use App\MoonShine\Resources\Event\Pages\EventIndexPage;
 use MoonShine\Contracts\Core\PageContract;
+use MoonShine\Laravel\Resources\ModelResource;
+
 
 /**
  * @extends ModelResource<Event, EventIndexPage, EventFormPage, EventDetailPage>
@@ -20,8 +19,18 @@ class EventResource extends ModelResource
 {
     protected string $model = Event::class;
 
-    protected string $title = 'Events';
-    
+    protected string $title = 'События';
+
+    protected string $column = 'title';
+
+    protected string $sortColumn = 'occurred_at';
+
+    protected bool $createInModal = true;
+
+    protected bool $editInModal = true;
+
+    protected bool $detailInModal = true;
+
     /**
      * @return list<class-string<PageContract>>
      */
@@ -32,5 +41,10 @@ class EventResource extends ModelResource
             EventFormPage::class,
             EventDetailPage::class,
         ];
+    }
+
+    protected function search(): array
+    {
+        return ['title', 'description'];
     }
 }

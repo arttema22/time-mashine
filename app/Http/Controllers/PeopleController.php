@@ -37,17 +37,38 @@ class PeopleController extends Controller
         ];
 
         foreach ($events as $event) {
-            $item = [
-                'id' => $id++,
-                'content' => $event->title,
-                'start' => $event->occurred_at,
-                'end' => $event->ended_at,
-                'title' => $event->description,
-                'type' => $event->ended_at ? 'background' : '',
-                'group' => $event->ended_at ? null : 'global_events',
-                'className' => $event->category,
-            ];
-            $items[] = $item;
+            if (is_null($event->ended_at)) {
+                // Точечное событие
+                $items[] = [
+                    'id' => $id++,
+                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
+                    'start' => $event->occurred_at,
+                    'end' => null,
+                    'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
+                    'group' => 'global_events',
+                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
+                ];
+            } else {
+                // Событие с длительностью
+                $items[] = [
+                    'id' => $id++,
+                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
+                    'start' => $event->occurred_at,
+                    'end' => $event->ended_at,
+                    'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
+                    'type' => 'point',
+                    'group' => 'global_events',
+                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
+                ];
+                $items[] = [
+                    'id' => $id++,
+                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
+                    'start' => $event->occurred_at,
+                    'end' => $event->ended_at,
+                    'type' => 'background',
+                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
+                ];
+            }
         }
 
         foreach ($people as $person) {

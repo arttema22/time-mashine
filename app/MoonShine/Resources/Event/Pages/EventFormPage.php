@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources\Event\Pages;
 
+use App\EventCategory;
 use App\MoonShine\Resources\Event\EventResource;
 use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
@@ -14,7 +15,7 @@ use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Date;
-use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Enum;
 use MoonShine\UI\Fields\Text;
 use MoonShine\UI\Fields\Textarea;
 use Throwable;
@@ -36,8 +37,7 @@ class EventFormPage extends FormPage
                 Textarea::make('description'),
                 Date::make('occurred_at'),
                 Date::make('ended_at'),
-                Text::make('category'),
-
+                Enum::make('category', 'category')->attach(EventCategory::class),
             ]),
         ];
     }

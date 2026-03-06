@@ -6,8 +6,13 @@
             color: white;
         }
 
-        .vis-item.war {
-            background-color: rgba(63, 63, 63, 0.4);
+        .vis-item.category-war {
+            background-color: #ef444488;
+            color: white;
+        }
+
+        .vis-item.category-health {
+            background-color: #0d542b88;
             color: white;
         }
     </style>
