@@ -13,6 +13,7 @@ class Event extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'description',
         'started_at',
         'ended_at',
@@ -33,9 +34,6 @@ class Event extends Model
         return $this->morphTo();
     }
 
-    /**
-     * Аксессор для отображения категории
-     */
     public function getCategoryLabelAttribute(): string
     {
         return $this->category?->toString() ?? 'Без категории';
@@ -46,7 +44,7 @@ class Event extends Model
         return $this->category?->icon() ?? '📌';
     }
 
-    public function getOccurredAtFormattedAttribute()
+    public function getStartedAtFormattedAttribute()
     {
         return $this->started_at?->format('d.m.Y');
     }

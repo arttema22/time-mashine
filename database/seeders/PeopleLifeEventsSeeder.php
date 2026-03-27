@@ -228,13 +228,15 @@ class PeopleLifeEventsSeeder extends Seeder
             }
 
             foreach ($personData['events'] as $eventData) {
+                $slug = \Illuminate\Support\Str::slug($eventData['title'] . '-' . $eventData['date'] . '-' . $person->slug);
                 Event::updateOrCreate(
+                    [
+                        'slug' => $slug,
+                    ],
                     [
                         'title' => $eventData['title'],
                         'eventable_type' => People::class,
                         'eventable_id' => $person->id,
-                    ],
-                    [
                         'description' => $eventData['description'],
                         'started_at' => $eventData['date'],
                         'ended_at' => null,

@@ -16,6 +16,13 @@ class OrganizationController extends Controller
         $organization = Organization::with(['affiliations.people', 'events'])
             ->where('slug', $slug)
             ->firstOrFail();
+
+        // Диапазон дат
+        $rangeStart = $organization->started_at->clone()->subYears(5);
+        $rangeEnd = $organization->ended_at
+            ? $organization->ended_at->clone()->addYears(5)
+            : now()->addYears(5);
+
         $items = [];
         $id = 1;
 
@@ -58,12 +65,6 @@ class OrganizationController extends Controller
             ];
         }
 
-        // Диапазон дат
-        $startDate = $organization->started_at->subYears(5)->format('Y-m-d');
-        $endDate = $organization->ended_at
-            ? $organization->ended_at->addYears(5)->format('Y-m-d')
-            : now()->addYears(5)->format('Y-m-d');
-
-        return view('organizations.show', compact('organization', 'items', 'startDate', 'endDate'));
+        return view('organizations.show', compact('organization', 'items', 'rangeStart', 'rangeEnd'));
     }
 }

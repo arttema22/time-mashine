@@ -23,6 +23,7 @@ class PeopleSeeder extends Seeder
         // Событие (Event)
         Event::create([
             'title' => 'Полет в космос',
+            'slug' => 'polet-v-kosmos',
             'description' => 'Восток-1',
             'started_at' => '1961-04-12 09:07:00',
             'eventable_type' => People::class,

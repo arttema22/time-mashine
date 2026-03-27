@@ -13,9 +13,10 @@ return new class extends Migration {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description')->nullable();
+            $table->string('slug')->unique();
             $table->dateTime('started_at');
             $table->dateTime('ended_at')->nullable();
+            $table->text('description')->nullable();
             $table->nullableMorphs('eventable');
             $table->string('category')->nullable();
             $table->string('cover_image')->nullable();
@@ -23,6 +24,7 @@ return new class extends Migration {
 
             $table->index('started_at');
             $table->index(['eventable_type', 'eventable_id', 'started_at']);
+            $table->index('title');
         });
     }
 

@@ -17,11 +17,13 @@ class PeopleController extends Controller
         $person = People::with(['affiliations.organization', 'events'])
             ->where('slug', $slug)
             ->firstOrFail();
+
         // Диапазон дат: 5 лет до рождения и 5 лет после смерти (или текущего времени)
         $rangeStart = $person->birth_date->clone()->subYears(5);
         $rangeEnd = $person->death_date
             ? $person->death_date->clone()->addYears(5)
             : now()->addYears(5);
+
         // Запрашиваем события, которые пересекаются с диапазоном жизни персоны
         $events = Event::whereNull('eventable_type')
             ->whereBetween('started_at', [$rangeStart, $rangeEnd])

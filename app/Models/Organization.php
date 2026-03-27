@@ -48,13 +48,13 @@ class Organization extends Model
         return $this->morphMany(Event::class, 'eventable');
     }
 
-    public function getFoundedDateFormattedAttribute()
+    public function getStartedAtFormattedAttribute()
     {
         return $this->started_at?->format('d.m.Y');
     }
 
-    public function getDissolvedDateFormattedAttribute()
+    public function getEndedAtFormattedAttribute()
     {
-        return $this->ended_at?->format('d.m.Y');
+        return $this->ended_at->format('d.m.Y');
     }
 }

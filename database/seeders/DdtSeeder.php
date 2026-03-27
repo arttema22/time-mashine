@@ -63,6 +63,7 @@ class DdtSeeder extends Seeder
                     'title' => $eventData['title'],
                 ],
                 [
+                    'slug' => \Illuminate\Support\Str::slug($eventData['title'] . '-' . $eventData['date'] . '-ddt'),
                     'description' => $eventData['description'] ?? null,
                     'started_at' => $eventData['date'],
                     'ended_at' => null,
@@ -295,6 +296,7 @@ class DdtSeeder extends Seeder
                         'title' => $eventData['title'],
                     ],
                     [
+                        'slug' => \Illuminate\Support\Str::slug($eventData['title'] . '-' . $eventData['date'] . '-' . $person->slug),
                         'description' => $eventData['description'] ?? null,
                         'started_at' => $eventData['date'],
                         'ended_at' => null,

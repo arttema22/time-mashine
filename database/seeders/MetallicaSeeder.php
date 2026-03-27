@@ -59,6 +59,7 @@ class MetallicaSeeder extends Seeder
                     'title' => $eventData['title'],
                 ],
                 [
+                    'slug' => \Illuminate\Support\Str::slug($eventData['title'] . '-' . $eventData['date'] . '-metallica'),
                     'description' => $eventData['description'] ?? null,
                     'started_at' => $eventData['date'],
                     'ended_at' => null,
@@ -274,6 +275,7 @@ class MetallicaSeeder extends Seeder
                         'title' => $eventData['title'],
                     ],
                     [
+                        'slug' => \Illuminate\Support\Str::slug($eventData['title'] . '-' . $eventData['date'] . '-' . $person->slug),
                         'description' => $eventData['description'] ?? null,
                         'started_at' => $eventData['date'],
                         'ended_at' => null,

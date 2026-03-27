@@ -15,9 +15,11 @@ class EventFactory extends Factory
     {
         $eventableType = $this->faker->randomElement([People::class, Organization::class]);
         $eventableId = $eventableType::factory();
+        $title = $this->faker->sentence(3);
 
         return [
-            'title' => $this->faker->sentence(3),
+            'title' => $title,
+            'slug' => \Illuminate\Support\Str::slug($title),
             'description' => $this->faker->paragraph(),
             'started_at' => $this->faker->dateTimeBetween('-50 years', 'now'),
             'eventable_type' => $eventableType,

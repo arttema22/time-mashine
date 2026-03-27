@@ -5,7 +5,8 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\People;
 use App\Models\Organization;
-//use App\Models\Event;
+use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 
 class SearchBar extends Component
 {
@@ -13,8 +14,20 @@ class SearchBar extends Component
     public $results = [];
     public $showResults = false;
     public $selectedFilter = 'all';
+    
+    /**
+     * Тип поиска: all, people, organizations, events
+     * Определяет, по какой сущности искать и какие фильтры показывать
+     */
+    public $searchType = 'all';
 
     protected $listeners = ['searchCompleted' => '$refresh'];
+
+    public function mount($searchType = 'all')
+    {
+        $this->searchType = $searchType;
+        $this->selectedFilter = $searchType;
+    }
 
     public function updatedSearch()
     {
@@ -29,27 +42,29 @@ class SearchBar extends Component
 
     public function performSearch()
     {
-        $query = strtolower($this->search);
         $this->results = [];
 
+        // Определяем активный фильтр: если searchType !== 'all', используем его, иначе selectedFilter
+        $activeFilter = $this->searchType === 'all' ? $this->selectedFilter : $this->searchType;
+
         // Поиск по людям
-        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'people') {
-            $people = People::where('name', 'LIKE', "%{$query}%")
+        if ($activeFilter === 'all' || $activeFilter === 'people') {
+            $people = People::where(DB::raw('LOWER(name)'), 'LIKE', '%' . strtolower($this->search) . '%')
                 ->limit(10)
                 ->get()
                 ->map(fn($p) => [
                     'type' => 'people',
                     'id' => $p->id,
                     'title' => $p->name,
-                    'subtitle' => $p->birth_date ? $p->birth_date_formatted . ' г.р.' : '',
+                    'subtitle' => $p->birth_date_formatted . ($p->death_date ? ' - ' . $p->death_date_formatted : ''),
                     'url' => route('people.show', $p->slug)
                 ]);
             $this->results = array_merge($this->results, $people->toArray());
         }
 
         // Поиск по организациям
-        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'organizations') {
-            $organizations = Organization::where('name', 'LIKE', "%{$query}%")
+        if ($activeFilter === 'all' || $activeFilter === 'organizations') {
+            $organizations = Organization::where(DB::raw('LOWER(name)'), 'LIKE', '%' . strtolower($this->search) . '%')
                 ->limit(10)
                 ->get()
                 ->map(fn($o) => [
@@ -59,21 +74,20 @@ class SearchBar extends Component
                     'subtitle' => $o->founded_date_formatted . ($o->ended_at ? ' - ' . $o->dissolved_date_formatted : ''),
                     'url' => route('organization.show', $o->slug)
                 ]);
-            $this->results = $organizations->toArray();
+            $this->results = array_merge($this->results, $organizations->toArray());
         }
 
         // Поиск по событиям
-        if ($this->selectedFilter === 'all' || $this->selectedFilter === 'events') {
-            $events = Event::where('title', 'LIKE', "%{$query}%")
-                ->orWhere('description', 'LIKE', "%{$query}%")
+        if ($activeFilter === 'all' || $activeFilter === 'events') {
+            $events = Event::where(DB::raw('LOWER(title)'), 'LIKE', '%' . strtolower($this->search) . '%')
                 ->limit(10)
                 ->get()
                 ->map(fn($e) => [
                     'type' => 'event',
                     'id' => $e->id,
                     'title' => $e->title,
-                    'subtitle' => $e->started_at ? 'Дата: ' . $e->started_at_formatted : '',
-                    'url' => route('events.show', $e->id)
+                    'subtitle' => $e->started_at_formatted . ($e->ended_at ? ' - ' . $e->ended_at_formatted : ''),
+                    'url' => route('event.show', $e->slug)
                 ]);
             $this->results = array_merge($this->results, $events->toArray());
         }
@@ -94,6 +108,9 @@ class SearchBar extends Component
 
     public function render()
     {
-        return view('livewire.search-bar');
+        return view('livewire.search-bar', [
+            'searchType' => $this->searchType,
+            'showFilters' => $this->searchType === 'all',
+        ]);
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index('birth_date');
+            $table->index('name');
         });
     }
 

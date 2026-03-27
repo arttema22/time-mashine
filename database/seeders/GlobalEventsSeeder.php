@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class GlobalEventsSeeder extends Seeder
 {
@@ -228,12 +229,14 @@ class GlobalEventsSeeder extends Seeder
         ];
 
         foreach ($events as $event) {
+            $slug = Str::slug($event['title']);
             DB::table('events')->updateOrInsert(
+                [
+                    'slug' => $slug,
+                ],
                 [
                     'title' => $event['title'],
                     'started_at' => $event['started_at'],
-                ],
-                [
                     'description' => $event['description'],
                     'ended_at' => $event['ended_at'],
                     'category' => $event['category'],

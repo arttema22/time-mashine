@@ -19,14 +19,14 @@
     <script type="text/javascript" src="{{ asset('vendor/vis-timeline/js/vis-timeline-graph2d.min.js') }}"></script>
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-50">
 
-    <div class="flex flex-col h-screen bg-gray-50 dark:bg-gray-800">
+    <div class="flex flex-col h-screen">
         @livewire('navigation-menu-guest')
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white shadow flex-shrink-0">
+            <header class="shadow flex-shrink-0">
                 <div class="max-w-90% mx-auto py-4 px-4 lg:px-8">
                     {{ $header }}
                 </div>
