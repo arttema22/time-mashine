@@ -88,4 +88,20 @@ return [
         'remove_item' => 'Remove item',
         'clear_all' => 'Clear all',
     ],
+    'button' => [
+        'all' => 'All',
+        'living' => 'Living',
+        'dead' => 'Dead',
+    ],
+    'page' => [
+        'people' => 'People',
+    ],
+    'col' => [
+        'name' => 'Name',
+        'slug' => 'Slug',
+        'birth_date' => 'Birth Date',
+        'death_date' => 'Death Date',
+        'biography' => 'Biography',
+        'events' => 'Events',
+    ],
 ];

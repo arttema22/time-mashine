@@ -8,7 +8,6 @@ use MoonShine\Laravel\Layouts\AppLayout;
 use MoonShine\ColorManager\Palettes\SkyPalette;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
-use MoonShine\Contracts\ColorManager\PaletteContract;
 use App\MoonShine\Resources\People\PeopleResource;
 use MoonShine\MenuManager\MenuItem;
 use App\MoonShine\Resources\Organization\OrganizationResource;
@@ -32,7 +31,7 @@ final class MoonShineLayout extends AppLayout
     {
         return [
             ...parent::menu(),
-            MenuItem::make(PeopleResource::class, 'People'),
+            MenuItem::make(PeopleResource::class, __('moonshine::ui.page.people')),
             MenuItem::make(OrganizationResource::class, 'Organizations'),
             MenuItem::make(EventResource::class, 'Events'),
         ];

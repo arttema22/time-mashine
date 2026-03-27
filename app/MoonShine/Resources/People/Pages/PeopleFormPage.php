@@ -10,7 +10,6 @@ use MoonShine\Contracts\Core\TypeCasts\DataWrapperContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Contracts\UI\FormBuilderContract;
-use MoonShine\Laravel\Fields\Relationships\BelongsToMany;
 use MoonShine\Laravel\Fields\Relationships\MorphMany;
 use MoonShine\Laravel\Fields\Slug;
 use MoonShine\Laravel\Pages\Crud\FormPage;
@@ -18,7 +17,6 @@ use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Date;
-use MoonShine\UI\Fields\Image;
 use MoonShine\UI\Fields\Text;
 use MoonShine\UI\Fields\Textarea;
 use Throwable;
@@ -36,21 +34,12 @@ class PeopleFormPage extends FormPage
     {
         return [
             Box::make([
-                Text::make('name'),
-                Slug::make('slug'),
-                Date::make('birth_date'),
-                Date::make('death_date'),
-                Textarea::make('biography'),
-                MorphMany::make(
-                    'events',
-                    'events',
-                    resource: EventResource::class
-                )->creatable(),
-
-                BelongsToMany::make(
-                    'organizations',
-                    formatted: 'name'
-                ),
+                Text::make(__('moonshine::ui.col.name'), 'name'),
+                Slug::make(__('moonshine::ui.col.slug'), 'slug'),
+                Date::make(__('moonshine::ui.col.birth_date'), 'birth_date')->format('d.m.Y'),
+                Date::make(__('moonshine::ui.col.death_date'), 'death_date')->format('d.m.Y'),
+                Textarea::make(__('moonshine::ui.col.biography'), 'biography'),
+                MorphMany::make(__('moonshine::ui.col.events'), 'events', resource: EventResource::class)->creatable(),
             ]),
         ];
     }

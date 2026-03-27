@@ -16,7 +16,7 @@ use MoonShine\UI\Components\FormBuilder;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Enum;
-use MoonShine\UI\Fields\Slug;
+use MoonShine\Laravel\Fields\Slug;
 use MoonShine\UI\Fields\Text;
 use MoonShine\UI\Fields\Textarea;
 use Throwable;
@@ -35,7 +35,7 @@ class EventFormPage extends FormPage
         return [
             Box::make([
                 Text::make('title'),
-                Slug::make('slug')->fromField('title')->required(),
+                Slug::make('slug'),
                 Textarea::make('description'),
                 Date::make('started_at'),
                 Date::make('ended_at'),

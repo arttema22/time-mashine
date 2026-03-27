@@ -13,8 +13,8 @@
 
     <x-timeline-visualization
         :items="$items"
-        :start-date="$startDate"
-        :end-date="$endDate"
+        :range-start="$rangeStart"
+        :range-end="$rangeEnd"
     />
 
 </x-guest-layout>
