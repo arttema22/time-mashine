@@ -38,7 +38,7 @@ class PeopleIndexPage extends IndexPage
             Text::make('name'),
             // Slug::make('slug'),
             Date::make('birth_date'),
-            Date::make('death_date'),
+            // Date::make('death_date'),
             // Textarea::make('biography'),
             // Image::make('photo_path'),
             MorphMany::make(
@@ -47,10 +47,10 @@ class PeopleIndexPage extends IndexPage
                 resource: EventResource::class
             )->relatedLink(),
 
-            BelongsToMany::make(
-                'organizations',
-                formatted: 'name'
-            ),
+            // BelongsToMany::make(
+            //     'organizations',
+            //     formatted: 'name'
+            // ),
         ];
     }
 

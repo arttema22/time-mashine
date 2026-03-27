@@ -4,103 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\People;
-use Illuminate\Http\Request;
 
 class PeopleController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        // Текущий год для отображения (по умолчанию текущий)
-        $currentYear = $request->input('year', now()->year);
-        $range = 20;
-
-        $startDate = now()->create($currentYear, 1, 1)->subYears($range);
-        $endDate = now()->create($currentYear, 1, 1)->addYears($range);
-
-        $people = People::whereBetween('birth_date', [$startDate, $endDate])
-            ->orderBy('birth_date')->get();
-        $events = Event::whereNull('eventable_type')->orderBy('started_at')->get();
-
-        $groups = [];
-        $items = [];
-        $id = 0;
-
-        $groups[] = [
-            'id' => 'global_events',
-            'content' => 'Global events',
-            'value' => 1,
-        ];
-        $groups[] = [
-            'id' => 'people',
-            'content' => 'People',
-            'value' => 2,
-        ];
-
-        foreach ($events as $event) {
-            if (is_null($event->ended_at)) {
-                // Точечное событие
-                $items[] = [
-                    'id' => $id++,
-                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->started_at,
-                    'end' => null,
-                    'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
-                    'group' => 'global_events',
-                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
-                ];
-            } else {
-                // Событие с длительностью
-                $items[] = [
-                    'id' => $id++,
-                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->started_at,
-                    'end' => $event->ended_at,
-                    'title' => ($event->category?->toString() ?? '') . "<br>" . ($event->description ?? ''),
-                    'type' => 'point',
-                    'group' => 'global_events',
-                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
-                ];
-                $items[] = [
-                    'id' => $id++,
-                    'content' => ($event->category?->icon() ?? '📌') . ' ' . $event->title,
-                    'start' => $event->started_at,
-                    'end' => $event->ended_at,
-                    'type' => 'background',
-                    'className' => 'category-' . ($event->category?->value ?? 'milestone'),
-                ];
-            }
-        }
-
-        foreach ($people as $person) {
-            $item = [
-                'id' => $id++,
-                'start' => $person->birth_date,
-                'content' => $person->name . "<br>" . $person->birth_date_formatted . ($person->death_date ? (' - ' . $person->death_date_formatted) : ''),
-                'title' => $person->name . "<br>" . $person->biography,
-                'person_slug' => $person->slug,
-                'className' => $person->death_date ? 'dead' : 'alive',
-                'end' => $person->death_date ? $person->death_date : now(),
-                'group' => 'people',
-                'type' => 'range',
-            ];
-            $items[] = $item;
-        }
-
-        // Навигация по годам
-        $prevYear = $currentYear - ($range * 2);
-        $nextYear = $currentYear + ($range * 2);
-
-        return view('people.index', compact(
-            'people',
-            'items',
-            'groups',
-            'startDate',
-            'endDate',
-            'currentYear',
-            'prevYear',
-            'nextYear',
-            'range'
-        ));
+        return view('people.index');
     }
 
     public function show($slug)
@@ -108,46 +17,105 @@ class PeopleController extends Controller
         $person = People::with(['affiliations.organization', 'events'])
             ->where('slug', $slug)
             ->firstOrFail();
+        // Диапазон дат: 5 лет до рождения и 5 лет после смерти (или текущего времени)
+        $rangeStart = $person->birth_date->clone()->subYears(5);
+        $rangeEnd = $person->death_date
+            ? $person->death_date->clone()->addYears(5)
+            : now()->addYears(5);
+        // Запрашиваем события, которые пересекаются с диапазоном жизни персоны
+        $events = Event::whereNull('eventable_type')
+            ->whereBetween('started_at', [$rangeStart, $rangeEnd])
+            ->whereBetween('ended_at', [$rangeStart, $rangeEnd])
+            ->get();
+        // Запрашиваем людей, которые пересекаются с диапазоном жизни персоны
+        $contemporaries = People::whereBetween('birth_date', [$rangeStart, $rangeEnd])
+            ->get();
 
-        $events = Event::all();
-
+        //$groups = [];
         $items = [];
-        $id = 1;
+        $group_id = 0;
+        $item_id = 0;
 
-        foreach ($events as $event) {
-            $item = [
-                'id' => $id++,
-                'content' => $event->title,
-                'start' => $event->started_at,
-                'end' => $event->ended_at ? $event->ended_at : $event->started_at,
-                'className' => $event->category,
-                'type' => "background",
-            ];
-            $items[] = $item;
-        }
+        // Группа для персоны
+        // $groups[] = [
+        //     'id' => $group_id,
+        //     'content' => 'Вехи в жизни',
+        //     'value' => $group_id,
+        // ];
+        // Дата рождения персоны
+        // $items[] = [
+        //     'id' => $item_id++,
+        //     'content' => "Дата рождения<br>" . $person->birth_date_formatted,
+        //     'start' => $person->birth_date,
+        //     'className' => 'birthday',
+        //     'group' => $group_id,
+        // ];
+
+        // Дата смерти персоны
+        // if ($person->death_date) {
+        //     $items[] = [
+        //         'id' => $item_id++,
+        //         'content' => "Дата смерти<br>" . $person->death_date_formatted,
+        //         'start' => $person->death_date,
+        //         'className' => 'deathday',
+        //         'group' => $group_id,
+        //     ];
+        // }
 
         $items[] = [
-            'id' => $id++,
-            'content' => "Дата рождения<br>" . $person->birth_date_formatted,
+            'id' => $item_id++,
+            'content' => '',
             'start' => $person->birth_date,
-            'className' => 'birthday'
+            'end' => $person->death_date ? $person->death_date : now(),
+            'type' => 'background',
         ];
 
-        if ($person->death_date) {
+        // События связанные с персоной
+        foreach ($person->events as $event) {
             $items[] = [
-                'id' => $id++,
-                'content' => "Дата смерти<br>" . $person->death_date_formatted,
-                'start' => $person->death_date,
-                'className' => 'deathday'
+                'id' => $item_id++,
+                'content' => $event->started_at->format('d.m.Y') . " - " . $event->title,
+                'start' => $event->started_at->format('Y-m-d'),
+                'title' => $event->description,
+                //'group' => $group_id,
+                'type' => 'point',
             ];
         }
+
+        // $group_id++;
+        // $groups[] = [
+        //     'id' => $group_id,
+        //     'content' => 'Всемирные события',
+        //     'value' => $group_id,
+        // ];
+
+        // Глобальные события
+        foreach ($events as $event) {
+            $items[] = [
+                'id' => $item_id++,
+                'content' => $event->title,
+                'start' => $event->started_at,
+                'end' => $event->ended_at ?? $event->started_at,
+                'className' => $event->category,
+                'type' => 'background',
+                // 'group' => $group_id,
+            ];
+        }
+
+        // $group_id++;
+        // $groups[] = [
+        //     'id' => $group_id,
+        //     'content' => 'Организации',
+        //     'value' => $group_id,
+        // ];
 
         // Участие в организациях
         foreach ($person->affiliations as $affiliation) {
             $item = [
-                'id' => $id++,
+                'id' => $item_id++,
                 'content' => $affiliation->organization->name . "<br>" . ($affiliation->role ?? ''),
                 'start' => $affiliation->started_at,
+                //'group' => $group_id,
             ];
             $item['end'] = $affiliation->ended_at
                 ? $affiliation->ended_at->format('Y-m-d')
@@ -155,23 +123,26 @@ class PeopleController extends Controller
             $items[] = $item;
         }
 
-        // События
-        foreach ($person->events as $event) {
-            $items[] = [
-                'id' => $id++,
-                'content' => $event->title . "<br>" . $event->started_at->format('d.m.Y'),
-                'start' => $event->started_at->format('Y-m-d'),
-                'type' => 'point',
-            ];
-        }
+        // $group_id++;
+        // $groups[] = [
+        //     'id' => $group_id,
+        //     'content' => 'Современники',
+        //     'value' => $group_id,
+        // ];
 
-        // Диапазон дат
-        $startDate = $person->birth_date->subYears(5)->format('Y-m-d');
-        $endDate = $person->death_date
-            ? $person->death_date->addYears(5)->format('Y-m-d')
-            : now()->addYears(5)->format('Y-m-d');
+        // Современники
+        // foreach ($contemporaries as $contemporary) {
+        //     $items[] = [
+        //         'id' => $item_id++,
+        //         'content' => $contemporary->name,
+        //         'start' => $contemporary->birth_date,
+        //         'end' => $contemporary->death_date ? $contemporary->death_date : now(),
+        //         'group' => $group_id,
+        //         'slug' => $contemporary->slug,
+        //     ];
+        // }
 
-        return view('people.show', compact('person', 'items', 'startDate', 'endDate'));
+        // return view('people.show', compact('person', 'groups', 'items', 'rangeStart', 'rangeEnd'));
+        return view('people.show', compact('person', 'items', 'rangeStart', 'rangeEnd'));
     }
-
 }

@@ -8,8 +8,7 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::paginate(15);
-        return view('organizations.index', compact('organizations'));
+        return view('organizations.index');
     }
 
     public function show($slug)
@@ -67,5 +66,4 @@ class OrganizationController extends Controller
 
         return view('organizations.show', compact('organization', 'items', 'startDate', 'endDate'));
     }
-
 }

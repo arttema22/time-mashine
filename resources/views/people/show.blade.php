@@ -1,58 +1,41 @@
 <x-guest-layout>
-    <style type="text/css">
-        .vis-item.birthday {
-            background-color: darkgreen;
-            border-color: green;
-            color: white;
-        }
-
-        .vis-item.deathday {
-            background-color: darkgray;
-            border-color: gray;
-            color: white;
-        }
-
-        .vis-item.war {
-            background-color: rgba(63, 63, 63, 0.4);
-        }
-    </style>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ $person->name }}
         </h2>
+        <p class="text-gray-600">
+            {{ $person->birth_date->format('d.m.Y') }}
+            @if ($person->death_date)
+                — {{ $person->death_date->format('d.m.Y') }}
+            @endif
+        </p>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-90% mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div id="visualization" class="h-full"></div>
 
-                <h1 class="text-2xl font-bold mb-4">{{ $person->name }}</h1>
-                <p class="text-gray-600 mb-6">
-                    {{ $person->birth_date->format('d.m.Y') }}
-                    @if($person->death_date)
-                    — {{ $person->death_date->format('d.m.Y') }}
-                    @endif
-                </p>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var container = document.getElementById("visualization");
+            var options = {
+                start: @json($rangeStart),
+                end: @json($rangeEnd),
+                height: '100%',
+            };
+            // var groups = new vis.DataSet(@json('$groups'));
+            var items = new vis.DataSet(@json($items));
 
-                <div id="visualization"></div>
+            // var timeline = new vis.Timeline(container, items, groups, options);
+            var timeline = new vis.Timeline(container, items, options);
 
-                <script>
-                    var items = new vis.DataSet(@json($items));
+            timeline.on("doubleClick", function(properties) {
+                if (properties.item) {
+                    var item = items.get(properties.item);
+                    if (item && item.slug) {
+                        window.location.href = '/people/' + item.slug;
+                    }
+                }
+            });
+        });
+    </script>
 
-                    var container = document.getElementById("visualization");
-                    var options = {
-                        start: @json($startDate),
-                        end: @json($endDate),
-                        height: '60vh',
-                        stack: true,
-                        locale: 'ru',
-                    };
-
-                    var timeline = new vis.Timeline(container, items, options);
-                </script>
-
-            </div>
-        </div>
-    </div>
 </x-guest-layout>

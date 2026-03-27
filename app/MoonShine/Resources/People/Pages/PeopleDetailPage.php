@@ -16,6 +16,8 @@ use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\Image;
 use MoonShine\UI\Fields\Text;
 use MoonShine\UI\Fields\Textarea;
+use MoonShine\Laravel\Fields\Relationships\MorphMany;
+use App\MoonShine\Resources\Event\EventResource;
 use Throwable;
 
 
@@ -34,6 +36,11 @@ class PeopleDetailPage extends DetailPage
             Slug::make('slug'),
             Date::make('birth_date'),
             Date::make('death_date'),
+            MorphMany::make(
+                'events',
+                'events',
+                resource: EventResource::class
+            ),
             Textarea::make('biography'),
             Image::make('photo_path'),
             BelongsToMany::make(

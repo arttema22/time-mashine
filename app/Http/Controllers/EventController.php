@@ -8,13 +8,11 @@ class EventController extends Controller
 {
     public function index()
     {
-        $events = Event::with('eventable')->orderBy('started_at', 'desc')->paginate(15);
-        return view('events.index', compact('events'));
+        return view('events.index');
     }
 
     public function show(Event $event)
     {
         return view('events.show', compact('event'));
     }
-
 }

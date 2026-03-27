@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AffiliationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationController;
@@ -17,20 +16,20 @@ Route::get('/people/{slug}', [PeopleController::class, 'show'])->name('people.sh
 Route::get('/organization', [OrganizationController::class, 'index'])->name('organization');
 Route::get('/organization/{slug}', [OrganizationController::class, 'show'])->name('organization.show');
 
+// Event routes
+Route::get('/event', [EventController::class, 'index'])->name('event');
+Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
 
 // Affiliation routes
-Route::resource('affiliations', AffiliationController::class);
+//Route::resource('affiliations', AffiliationController::class);
 
-// Event routes
-Route::resource('events', EventController::class);
-
-Route::middleware([
-    // 'auth:sanctum',
-    // config('jetstream.auth_session'),
-    // 'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
+// Route::middleware([
+//     // 'auth:sanctum',
+//     // config('jetstream.auth_session'),
+//     // 'verified',
+// ])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->name('dashboard');
+// });

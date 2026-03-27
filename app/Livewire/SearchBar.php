@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\People;
 use App\Models\Organization;
-use App\Models\Event;
+//use App\Models\Event;
 
 class SearchBar extends Component
 {
@@ -35,7 +35,6 @@ class SearchBar extends Component
         // Поиск по людям
         if ($this->selectedFilter === 'all' || $this->selectedFilter === 'people') {
             $people = People::where('name', 'LIKE', "%{$query}%")
-                ->orWhere('biography', 'LIKE', "%{$query}%")
                 ->limit(10)
                 ->get()
                 ->map(fn($p) => [
@@ -51,17 +50,16 @@ class SearchBar extends Component
         // Поиск по организациям
         if ($this->selectedFilter === 'all' || $this->selectedFilter === 'organizations') {
             $organizations = Organization::where('name', 'LIKE', "%{$query}%")
-                ->orWhere('description', 'LIKE', "%{$query}%")
                 ->limit(10)
                 ->get()
                 ->map(fn($o) => [
                     'type' => 'organization',
                     'id' => $o->id,
                     'title' => $o->name,
-                    'subtitle' => $o->started_at ? 'Основано: ' . $o->started_at_formatted : '',
-                    'url' => route('organizations.show', $o->slug)
+                    'subtitle' => $o->founded_date_formatted . ($o->ended_at ? ' - ' . $o->dissolved_date_formatted : ''),
+                    'url' => route('organization.show', $o->slug)
                 ]);
-            $this->results = array_merge($this->results, $organizations->toArray());
+            $this->results = $organizations->toArray();
         }
 
         // Поиск по событиям

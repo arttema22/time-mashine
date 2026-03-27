@@ -3,38 +3,27 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ $organization->name }}
         </h2>
+        <p class="text-gray-600">
+            {{ $organization->started_at->format('d.m.Y') }}
+            @if ($organization->ended_at)
+                — {{ $organization->ended_at->format('d.m.Y') }}
+            @endif
+        </p>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-90% mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div id="visualization" class="h-full"></div>
 
-                <h1 class="text-2xl font-bold mb-4">{{ $organization->name }}</h1>
-                <p class="text-gray-600 mb-6">
-                    {{ $organization->started_at->format('d.m.Y') }}
-                    @if($organization->ended_at)
-                    — {{ $organization->ended_at->format('d.m.Y') }}
-                    @endif
-                </p>
+    <script>
+        var items = new vis.DataSet(@json($items));
 
-                <div id="visualization"></div>
+        var container = document.getElementById("visualization");
+        var options = {
+            start: @json($startDate),
+            end: @json($endDate),
+            height: '100%',
+        };
 
-                <script>
-                    var items = new vis.DataSet(@json($items));
+        var timeline = new vis.Timeline(container, items, options);
+    </script>
 
-                    var container = document.getElementById("visualization");
-                    var options = {
-                        start: @json($startDate),
-                        end: @json($endDate),
-                        height: '60vh',
-                        stack: true,
-                        locale: 'ru',
-                    };
-
-                    var timeline = new vis.Timeline(container, items, options);
-                </script>
-
-            </div>
-        </div>
-    </div>
 </x-guest-layout>

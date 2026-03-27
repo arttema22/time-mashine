@@ -177,17 +177,6 @@ class RussianHistoryEventsSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'title' => 'Победа над фашистской Германией (День Победы)',
-                'description' => 'Завершение Великой Отечественной войны. Парад Победы в Москве.',
-                'started_at' => '1945-05-09 00:00:00',
-                'ended_at' => null,
-                'eventable_type' => null,
-                'eventable_id' => null,
-                'category' => 'milestone', // Изменено на milestone
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'title' => 'Хрущёвская оттепель',
                 'description' => 'Период относительной либерализации в СССР после смерти Сталина.',
                 'started_at' => '1953-03-05 00:00:00', // Смерть Сталина
@@ -195,17 +184,6 @@ class RussianHistoryEventsSeeder extends Seeder
                 'eventable_type' => null,
                 'eventable_id' => null,
                 'category' => 'political', // Изменено на political
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Полёт Юрия Гагарина в космос',
-                'description' => 'Первый человек в космосе.',
-                'started_at' => '1961-04-12 09:07:00', // Приблизительное время запуска
-                'ended_at' => '1961-04-12 10:55:00', // Посадка
-                'eventable_type' => 'App\Models\People', // Если модель People находится в App\Models
-                'eventable_id' => 1, // Предполагается, что Юрий Гагарин уже добавлен в таблицу people с id=1
-                'category' => 'science', // Изменено на science
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -261,17 +239,6 @@ class RussianHistoryEventsSeeder extends Seeder
                 'eventable_type' => 'App\Models\People', // Если модель People
                 'eventable_id' => 2, // Предполагается, что Владимир Путин уже добавлен в таблицу people с id=2
                 'category' => 'political', // Изменено на political
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'title' => 'Олимпийские игры в Сочи',
-                'description' => 'Зимние Олимпийские игры 2014 года прошли в Сочи, Россия.',
-                'started_at' => '2014-02-07 00:00:00',
-                'ended_at' => '2014-02-23 00:00:00',
-                'eventable_type' => null,
-                'eventable_id' => null,
-                'category' => 'milestone', // Изменено на milestone
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
